@@ -1,0 +1,46 @@
+{
+  "name": "consultant-stack",
+  "version": "1.0.0",
+  "description": "Framework d'agents IA pour consultants B2B / AI agents framework for B2B consultants",
+  "main": "bin/cli.js",
+  "bin": {
+    "consultant": "./bin/cli.js"
+  },
+  "scripts": {
+    "test": "echo \"No tests yet\" && exit 0"
+  },
+  "files": [
+    "agents/**",
+    "skills/**",
+    "templates/**",
+    "modules/**",
+    "data/**",
+    "bin/**",
+    "*.yaml",
+    "*.md"
+  ],
+  "keywords": [
+    "ai",
+    "consultant",
+    "claude",
+    "agents",
+    "b2b",
+    "framework",
+    "consulting",
+    "project-management",
+    "automation"
+  ],
+  "author": "PoulpYBifle",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PoulpYBifle/consultant.git"
+  },
+  "bugs": {
+    "url": "https://github.com/PoulpYBifle/consultant/issues"
+  },
+  "homepage": "https://github.com/PoulpYBifle/consultant#readme",
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
