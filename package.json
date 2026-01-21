@@ -1,6 +1,6 @@
 {
   "name": "consultemps",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Framework d'agents IA pour consultants B2B / AI agents framework for B2B consultants",
   "main": "bin/cli.js",
   "bin": {
