@@ -128,6 +128,57 @@ next_action:
 
 checkpoints_passed: {}
 
+# 🚦 QUALITY GATES - Initialized for all phases
+quality_gates:
+  discovery:
+    status: "pending"
+    last_check: ""
+    required_items: 11
+    passed_items: 0
+    blocking_items: []
+
+  specs:
+    status: "pending"
+    last_check: ""
+    required_items: 12
+    passed_items: 0
+    review_issues_found: 0
+    review_issues_resolved: 0
+    blocking_items: []
+
+  planning:
+    status: "pending"
+    last_check: ""
+    required_items: 12
+    passed_items: 0
+    stories_validated: 0
+    stories_incomplete: []
+    buffer_percentage: 0
+    blocking_items: []
+
+  development:
+    current_story: ""
+    status: "pending"
+    placeholder_scan: "pending"
+    tests_exist: "pending"
+    tests_pass: "pending"
+    review_done: "pending"
+    review_issues_found: 0
+    blockers_resolved: "pending"
+    blocking_items: []
+
+  delivery:
+    status: "pending"
+    last_check: ""
+    required_items: 17
+    passed_items: 0
+    docs_validated: false
+    package_complete: false
+    final_validation: "pending"
+    blocking_items: []
+
+gate_history: []
+
 blockers: []
 notes: []
 

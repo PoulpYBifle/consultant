@@ -115,6 +115,37 @@ ALL must PASS before story is done.
 [ ] Dev Notes updated in story file
 [ ] No console.log or debug code left
 [ ] Code follows project patterns
+[ ] 🚨 PLACEHOLDER SCAN PASSED (zero results)
+```
+
+### 6.5. Quality Gate Validation (MANDATORY)
+
+```markdown
+## Development Quality Gate
+
+BEFORE marking this story as done, validate:
+
+### Placeholder Scan
+[ ] Run: grep -rn "TODO\|FIXME" src/
+[ ] Run: grep -rn "Not implemented" src/
+[ ] Run: grep -rn "() => {}" src/
+[ ] ALL scans return ZERO results
+
+### Test Verification
+[ ] All AC have at least one test
+[ ] All tests PASS
+[ ] All existing tests still PASS
+
+### Code Review
+[ ] Code review performed
+[ ] At least 3 issues identified (not "looks good")
+[ ] All BLOCKER issues resolved
+[ ] All MAJOR issues resolved
+
+### If ANY check fails:
+🛑 DO NOT mark story as done
+🛑 Return to appropriate sub-agent
+🛑 Fix issues and re-validate
 ```
 
 ### 7. Complete Story
@@ -218,6 +249,113 @@ Subtask 3/5 completed
 
 ---
 
+## 🚨 ANTI-PLACEHOLDER RULES (CRITICAL)
+
+```
+🔴 ABSOLUTE RULE: ZERO PLACEHOLDERS ALLOWED
+
+This is the MOST IMPORTANT rule in the entire system.
+A story is NEVER "done" if it contains placeholder code.
+```
+
+### Forbidden Patterns - NEVER WRITE THESE:
+
+```javascript
+// ❌ FORBIDDEN - Placeholder comments
+// TODO: implement this later
+// FIXME: add actual implementation
+// Will be done in STORY-XXX
+// @todo: complete this
+
+// ❌ FORBIDDEN - Fake implementations
+function doSomething() {
+  throw new Error("Not implemented");
+}
+
+async function fetchData() {
+  throw new Error("Not yet implemented");
+}
+
+// ❌ FORBIDDEN - Empty handlers
+onClick={() => {}}
+onChange={() => { /* TODO */ }}
+
+// ❌ FORBIDDEN - Stub returns
+return null; // temporary
+return []; // will populate later
+return {}; // placeholder
+
+// ❌ FORBIDDEN - Mock data in production code
+const users = [{ id: 1, name: "Test" }]; // mock
+const data = { foo: "bar" }; // temporary data
+```
+
+### Required Patterns - ALWAYS WRITE THESE:
+
+```javascript
+// ✅ CORRECT - Actual working implementation
+async function getUsers() {
+  const response = await api.get('/users');
+  return response.data;
+}
+
+// ✅ CORRECT - Real error handling
+try {
+  await saveUser(data);
+} catch (error) {
+  logger.error('Failed to save user', { error, data });
+  throw new UserSaveError(error.message);
+}
+
+// ✅ CORRECT - Complete implementation
+function calculateTotal(items) {
+  return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+}
+
+// ✅ CORRECT - Real validation
+function validateEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    throw new ValidationError('Invalid email format');
+  }
+  return true;
+}
+```
+
+### Placeholder Scan (MANDATORY before marking done)
+
+```bash
+# This scan MUST be run and return ZERO results
+
+# Scan for TODO/FIXME
+grep -rn "TODO\|FIXME\|@todo" src/
+
+# Scan for "Not implemented"
+grep -rn "Not implemented\|not yet implemented" src/
+
+# Scan for empty functions
+grep -rn "() => {}" src/
+grep -rn "function.*{[\s]*}" src/
+
+# Scan for stub throws
+grep -rn "throw new Error.*implement" src/
+```
+
+### If Scan Finds Placeholders:
+
+```
+🛑 STOP - Story is NOT done
+
+1. DO NOT mark story as done
+2. DO NOT commit placeholder code
+3. RETURN to Coder sub-agent
+4. IMPLEMENT the actual functionality
+5. RE-RUN placeholder scan
+6. ONLY proceed when scan returns zero results
+```
+
+---
+
 ## Anti-Patterns to Avoid
 
 ```
@@ -227,6 +365,9 @@ Subtask 3/5 completed
 ⚠️ NEVER mark story done if any AC fails
 ⚠️ NEVER leave debug code in production
 ⚠️ NEVER skip updating Dev Notes
+🚨 NEVER write placeholder code (TODO, FIXME, not implemented)
+🚨 NEVER use mock data in production code
+🚨 NEVER leave empty function bodies
 ```
 
 ---

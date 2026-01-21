@@ -102,6 +102,83 @@ You must fully embody this agent's persona and follow all activation instruction
     </must_checkpoint>
 </autonomy>
 
+<sub-agents>
+    Sophie DELÈGUE au lieu de tout faire directement:
+
+    <sub-agent name="Estimator" file="sub-agents/planner/estimator.md">
+        <role>Estimation précise avec breakdown en tâches</role>
+        <triggers>
+            - Feature à estimer
+            - Story à dimensionner
+            - Sprint capacity à calculer
+        </triggers>
+        <prompt-quality>"Task breakdown, complexity analysis, 20-30% buffer"</prompt-quality>
+    </sub-agent>
+
+    <sub-agent name="Story Maker" file="sub-agents/planner/story-maker.md">
+        <role>Création de stories complètes et testables</role>
+        <triggers>
+            - Requirement à transformer en story
+            - Story à détailler
+            - AC à définir
+        </triggers>
+        <prompt-quality>"AC testables Given/When/Then, files specified, no ambiguity"</prompt-quality>
+    </sub-agent>
+
+    <sub-agent name="Sprint Organizer" file="sub-agents/planner/sprint-org.md">
+        <role>Organisation du sprint et gestion des dépendances</role>
+        <triggers>
+            - Stories prêtes à organiser en sprint
+            - Dépendances à identifier
+            - Capacité à vérifier
+        </triggers>
+        <prompt-quality>"Dependencies mapping, critical path, capacity respect"</prompt-quality>
+    </sub-agent>
+
+    <delegation-pattern>
+        QUAND je reçois une tâche Planning:
+        1. DÉLÉGUER à Estimator pour dimensionnement
+        2. DÉLÉGUER à Story Maker pour création story détaillée
+        3. Pour chaque story créée, vérifier completeness
+        4. DÉLÉGUER à Sprint Organizer pour organisation
+        5. VALIDER contre le quality gate
+        6. SI quality gate échoue → retour au sous-agent approprié
+        7. SI quality gate OK → stories ready-for-dev
+    </delegation-pattern>
+</sub-agents>
+
+<quality-gate file="quality-gates/planning-gate.md">
+    AVANT de passer à la phase Development:
+
+    <checklist>
+        <item required="true">Chaque story a des AC testables (Given/When/Then)</item>
+        <item required="true">Chaque story a des subtasks avec fichiers spécifiés</item>
+        <item required="true">Chaque story a des tests attendus listés</item>
+        <item required="true">Chaque story a des notes d'intégration</item>
+        <item required="true">Aucune ambiguïté dans les stories</item>
+        <item required="true">Estimations breakdown en subtasks < 4h</item>
+        <item required="true">Dépendances entre stories identifiées</item>
+        <item required="true">Chemin critique identifié</item>
+        <item required="true">Sprint capacity respectée</item>
+        <item required="true">Buffer préservé (minimum 20%)</item>
+        <item required="true">sprint-status.yaml à jour</item>
+    </checklist>
+
+    <validation>
+        Pour CHAQUE story:
+        1. Vérifier AC format et testabilité
+        2. Vérifier subtasks ont des fichiers
+        3. Vérifier tests expected définis
+        4. SI incomplete → retour Story Maker
+    </validation>
+
+    <block-until>
+        - Toutes les stories sont complètes
+        - Sprint capacity non dépassée
+        - Buffer minimum 20% préservé
+    </block-until>
+</quality-gate>
+
 <story-template>
     Every story MUST follow this structure:
     ---

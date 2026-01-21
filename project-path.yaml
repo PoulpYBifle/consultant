@@ -191,3 +191,99 @@ transition_rules:
 
   # Un workflow repeatable peut être exécuté plusieurs fois
   # mais doit être exécuté au moins une fois si required: true
+
+  # 🚨 QUALITY GATES - OBLIGATOIRES AVANT TRANSITION
+  quality_gates_are_blocking: true
+
+# -----------------------------------------------------------------------------
+# QUALITY GATES PAR TRANSITION DE PHASE
+# -----------------------------------------------------------------------------
+# Chaque quality gate DOIT passer avant de pouvoir transitionner.
+# Un gate "blocked" empêche TOUTE progression vers la phase suivante.
+# -----------------------------------------------------------------------------
+phase_quality_gates:
+  # Avant de quitter Discovery → Quotation
+  discovery_to_quotation:
+    gate_file: "discovery-gate.md"
+    required_items:
+      - "Tous les besoins ont un 'pourquoi' documenté"
+      - "Au moins 3 scénarios concrets par feature"
+      - "Hidden needs identifiés"
+      - "Aucun terme ambigu non résolu"
+      - "Jobs-to-be-Done clairement articulé"
+      - "Scope IN/OUT défini"
+      - "Métriques de succès définies"
+      - "project-context.md à jour"
+    block_message: |
+      🚦 QUALITY GATE BLOQUÉ: Discovery → Quotation
+      Les critères suivants ne sont pas satisfaits:
+      {blocking_items}
+      Veuillez les compléter avant de passer au devis.
+
+  # Avant de quitter Specs → Planning
+  specs_to_planning:
+    gate_file: "specs-gate.md"
+    required_items:
+      - "Toutes les décisions techniques ont un ADR"
+      - "Trade-offs explicites pour chaque décision"
+      - "Spec couvre 100% des requirements"
+      - "Tous les cas d'erreur spécifiés"
+      - "Edge cases couverts"
+      - "Review adversarial effectuée (3+ issues)"
+      - "Issues CRITICAL/MAJOR résolus"
+      - "architecture_sign_off obtenu"
+    block_message: |
+      🚦 QUALITY GATE BLOQUÉ: Specs → Planning
+      La spécification technique n'est pas prête:
+      {blocking_items}
+      Veuillez résoudre ces points avant de créer des stories.
+
+  # Avant de quitter Planning → Development
+  planning_to_development:
+    gate_file: "planning-gate.md"
+    required_items:
+      - "Chaque story a des AC testables (Given/When/Then)"
+      - "Chaque story a des subtasks avec fichiers"
+      - "Chaque story a des tests attendus"
+      - "Estimations < 4h par subtask"
+      - "Dépendances identifiées"
+      - "Sprint capacity respectée (buffer 20%)"
+    block_message: |
+      🚦 QUALITY GATE BLOQUÉ: Planning → Development
+      Les stories ne sont pas prêtes pour le développement:
+      {blocking_items}
+      Complétez les stories avant de commencer à coder.
+
+  # Par story avant de marquer "done" (STRICT)
+  story_done:
+    gate_file: "development-gate.md"
+    required_items:
+      - "🚨 ZERO placeholders dans le code"
+      - "Code compile sans erreur"
+      - "Tous les AC satisfaits"
+      - "Tests EXISTENT pour chaque AC"
+      - "Tous les tests PASSENT"
+      - "Code review effectuée (3+ issues)"
+      - "BLOCKERS résolus"
+      - "MAJOR issues résolus"
+    block_message: |
+      🚦 STORY NON TERMINÉE
+      Cette story ne peut pas être marquée "done":
+      {blocking_items}
+      ⚠️ AUCUN PLACEHOLDER N'EST ACCEPTABLE.
+
+  # Avant livraison finale
+  development_to_delivery:
+    gate_file: "delivery-gate.md"
+    required_items:
+      - "Toutes les stories done"
+      - "Tous les tests passent"
+      - "Documentation complète"
+      - "Runbook testé (backup/restore)"
+      - "Package de livraison complet"
+      - "Validation finale effectuée"
+    block_message: |
+      🚦 QUALITY GATE BLOQUÉ: Livraison
+      Le projet n'est pas prêt pour la livraison:
+      {blocking_items}
+      Complétez ces éléments avant de livrer au client.

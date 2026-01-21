@@ -66,6 +66,76 @@ checkpoints_passed:
   # final_delivery: ""            # Date de livraison finale
 
 # -----------------------------------------------------------------------------
+# QUALITY GATES STATUS
+# -----------------------------------------------------------------------------
+# Each phase has a quality gate that MUST pass before moving to next phase.
+# Gate cannot be bypassed - all required items must be ✅
+# -----------------------------------------------------------------------------
+quality_gates:
+  discovery:
+    status: "pending"              # pending | in_progress | passed | blocked
+    last_check: ""
+    required_items: 11
+    passed_items: 0
+    blocking_items: []             # List of items blocking the gate
+
+  specs:
+    status: "pending"
+    last_check: ""
+    required_items: 12
+    passed_items: 0
+    review_issues_found: 0         # Adversarial review must find 3+ issues
+    review_issues_resolved: 0
+    blocking_items: []
+
+  planning:
+    status: "pending"
+    last_check: ""
+    required_items: 12
+    passed_items: 0
+    stories_validated: 0
+    stories_incomplete: []
+    buffer_percentage: 0           # Must be >= 20%
+    blocking_items: []
+
+  development:                     # Per-story gate tracked separately
+    current_story: ""
+    status: "pending"
+    placeholder_scan: "pending"    # pending | passed | FAILED (blocking)
+    tests_exist: "pending"         # pending | passed | FAILED (blocking)
+    tests_pass: "pending"          # pending | passed | FAILED (blocking)
+    review_done: "pending"         # pending | passed
+    review_issues_found: 0         # Must find 3+ issues
+    blockers_resolved: "pending"   # pending | passed | FAILED (blocking)
+    blocking_items: []
+
+  delivery:
+    status: "pending"
+    last_check: ""
+    required_items: 17
+    passed_items: 0
+    docs_validated: false
+    package_complete: false
+    final_validation: "pending"    # pending | passed | FAILED
+    blocking_items: []
+
+# -----------------------------------------------------------------------------
+# QUALITY GATE HISTORY
+# -----------------------------------------------------------------------------
+gate_history: []
+  # - gate: "discovery"
+  #   checked: "2024-01-15 14:30"
+  #   result: "passed"
+  #   items_checked: 11
+  #   items_passed: 11
+  # - gate: "development"
+  #   story: "STORY-001"
+  #   checked: "2024-01-16 10:00"
+  #   result: "blocked"
+  #   reason: "placeholder_scan_failed"
+  #   placeholders_found: ["src/auth.ts:42", "src/user.ts:18"]
+
+# -----------------------------------------------------------------------------
 # NOTES & BLOCKERS
 # -----------------------------------------------------------------------------
 blockers: []                      # Liste des éléments bloquants

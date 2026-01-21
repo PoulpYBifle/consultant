@@ -35,6 +35,44 @@ paths:
   templates_dir: "{project-root}/_consultant/templates"
   agents_dir: "{project-root}/_consultant/agents"
   skills_dir: "{project-root}/_consultant/skills"
+  # Nouveaux chemins pour le système amélioré
+  sub_agents_dir: "{project-root}/_consultant/sub-agents"
+  quality_gates_dir: "{project-root}/_consultant/quality-gates"
+
+# -----------------------------------------------------------------------------
+# SOUS-AGENTS PAR AGENT PRINCIPAL
+# -----------------------------------------------------------------------------
+sub_agents:
+  discovery:
+    - interviewer     # Questions profondes, 5 Whys
+    - clarifier       # Transformer le flou en concret
+    - framer          # Jobs-to-be-Done, scope
+  architect:
+    - tech-decider    # ADR format, décisions techniques
+    - spec-writer     # Specs sans ambiguïté
+    - reviewer        # Review adversarial (3-10 issues)
+  planner:
+    - estimator       # Breakdown, complexity analysis
+    - story-maker     # AC testables, Given/When/Then
+    - sprint-org      # Dependencies, critical path
+  developer:
+    - coder           # ZERO PLACEHOLDERS
+    - tester          # 100% AC coverage
+    - code-reviewer   # Review adversarial (3-10 issues)
+  delivery:
+    - doc-writer      # User-focused docs
+    - packager        # Checklist-driven delivery
+    - validator       # Validation finale
+
+# -----------------------------------------------------------------------------
+# QUALITY GATES PAR PHASE
+# -----------------------------------------------------------------------------
+quality_gates:
+  discovery: "discovery-gate.md"    # Avant passage à Quotation
+  specs: "specs-gate.md"            # Avant passage à Planning
+  planning: "planning-gate.md"      # Avant passage à Development
+  development: "development-gate.md" # Par story, STRICT (zero placeholders)
+  delivery: "delivery-gate.md"      # Avant livraison finale
 
 # -----------------------------------------------------------------------------
 # NIVEAUX D'AUTONOMIE PAR AGENT
@@ -86,3 +124,69 @@ global_rules:
   - "NEVER skip checkpoints for critical actions"
   - "ALWAYS communicate in {communication_language}"
   - "ALWAYS generate documents in {document_output_language}"
+  - "ALWAYS verify quality gate before phase transition"
+  - "ALWAYS delegate to appropriate sub-agent for specialized tasks"
+
+# -----------------------------------------------------------------------------
+# 🚨 RÈGLES ANTI-PLACEHOLDER (CRITIQUES)
+# -----------------------------------------------------------------------------
+anti_placeholder_rules:
+  enabled: true
+  blocking: true  # Empêche de marquer une story "done" si placeholders trouvés
+
+  # Patterns interdits
+  forbidden_patterns:
+    - "TODO"
+    - "FIXME"
+    - "@todo"
+    - "Not implemented"
+    - "not yet implemented"
+    - "implement later"
+    - "will be done"
+    - "throw new Error"
+    - "() => {}"
+    - "function() {}"
+    - "// temporary"
+    - "// placeholder"
+    - "// mock"
+
+  # Actions si placeholder détecté
+  on_placeholder_found:
+    - "STOP - Do not mark story as done"
+    - "RETURN to Coder sub-agent"
+    - "IMPLEMENT actual functionality"
+    - "RE-SCAN before proceeding"
+
+  # Message d'erreur
+  error_message: |
+    🚨 PLACEHOLDER DÉTECTÉ - STORY NON TERMINÉE
+
+    Des placeholders ont été trouvés dans le code.
+    Une story ne peut JAMAIS être marquée "done" avec des placeholders.
+
+    Actions requises:
+    1. Localiser les placeholders
+    2. Implémenter le code réel
+    3. Re-scanner
+    4. Soumettre à nouveau
+
+# -----------------------------------------------------------------------------
+# RÈGLES DE REVIEW ADVERSARIAL
+# -----------------------------------------------------------------------------
+adversarial_review_rules:
+  minimum_issues: 3           # Minimum d'issues à trouver par review
+  maximum_issues: 10          # Pour éviter le blocage excessif
+  looks_good_forbidden: true  # "Looks good" n'est JAMAIS acceptable
+
+  # Si moins de 3 issues trouvés
+  insufficient_review_message: |
+    ⚠️ REVIEW INCOMPLÈTE
+
+    Seulement {found} issue(s) trouvé(s). Minimum requis: 3.
+    "Looks good" n'est JAMAIS acceptable.
+
+    Veuillez approfondir la review:
+    - Vérifier la couverture des tests
+    - Chercher les edge cases non gérés
+    - Analyser la sécurité
+    - Vérifier les patterns du projet
