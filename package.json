@@ -1,10 +1,10 @@
 {
-  "name": "consultant-stack",
+  "name": "consultemps",
   "version": "1.0.0",
   "description": "Framework d'agents IA pour consultants B2B / AI agents framework for B2B consultants",
   "main": "bin/cli.js",
   "bin": {
-    "consultant-stack": "./bin/cli.js"
+    "consultemps": "./bin/cli.js"
   },
   "scripts": {
     "test": "echo \"No tests yet\" && exit 0"

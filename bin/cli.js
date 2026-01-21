@@ -392,7 +392,7 @@ Framework d'agents IA pour consultants B2B
 AI agents framework for B2B consultants
 
 USAGE:
-  consultant-stack <command> [options]
+  consultant <command> [options]
 
 COMMANDS:
   init [path]    Initialize the consultant stack in a directory
@@ -408,9 +408,9 @@ COMMANDS:
                  Afficher le numéro de version
 
 EXAMPLES:
-  npx consultant-stack init              # Initialize in current directory
-  npx consultant-stack init ./my-project # Initialize in specific directory
-  npx consultant-stack init --force      # Overwrite existing installation
+  npx consultemps init              # Initialize in current directory
+  npx consultemps init ./my-project # Initialize in specific directory
+  npx consultemps init --force      # Overwrite existing installation
 
 MORE INFO:
   https://github.com/PoulpYBifle/consultant
@@ -419,7 +419,7 @@ MORE INFO:
 
 function showVersion() {
   const pkg = require('../package.json');
-  console.log(`consultant-stack v${pkg.version}`);
+  console.log(`consultant v${pkg.version}`);
 }
 
 // ============================================================================
