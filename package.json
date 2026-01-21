@@ -4,7 +4,7 @@
   "description": "Framework d'agents IA pour consultants B2B / AI agents framework for B2B consultants",
   "main": "bin/cli.js",
   "bin": {
-    "consultant": "./bin/cli.js"
+    "consultant-stack": "./bin/cli.js"
   },
   "scripts": {
     "test": "echo \"No tests yet\" && exit 0"
@@ -17,8 +17,12 @@
     "data/**",
     "bin/**",
     "*.yaml",
-    "*.md"
+    "*.md",
+    "LICENSE"
   ],
+  "dependencies": {
+    "prompts": "^2.4.2"
+  },
   "keywords": [
     "ai",
     "consultant",
