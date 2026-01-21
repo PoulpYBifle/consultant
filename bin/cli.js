@@ -426,7 +426,7 @@ function setupClaudeCode(targetDir) {
     { name: 'handoff', type: 'skill', description: 'Livraison au client' },
     { name: 'status', type: 'skill', description: 'Statut du projet en cours' },
     { name: 'next', type: 'skill', description: 'Prochaine etape recommandee' },
-    { name: 'init', type: 'skill', description: 'Initialisation d un nouveau projet' },
+    { name: 'project-init', type: 'skill', description: 'Initialisation d un nouveau projet client' },
     { name: 'analyze-codebase', type: 'skill', description: 'Analyse du codebase existant (brownfield)' },
     { name: 'upsell', type: 'skill', description: 'Identification d opportunites commerciales' }
   ];
@@ -436,7 +436,11 @@ function setupClaudeCode(targetDir) {
     fs.writeFileSync(path.join(commandsDir, `${skill.name}.md`), content, 'utf8');
   }
 
+  // Create CLAUDE.md at project root
+  generateClaudeMd(targetDir);
+
   console.log('     Created .claude/commands/consultant/');
+  console.log('     Created CLAUDE.md');
   console.log('     Use /consultant:orchestrator to start');
 }
 
@@ -444,6 +448,12 @@ function generateClaudeCodeCommand(skill) {
   const filePath = skill.type === 'agent'
     ? `_consultant/agents/${skill.name}.md`
     : `_consultant/skills/${skill.name}.md`;
+
+  // Map skill name to actual file (handle rename)
+  const actualFileName = skill.name === 'project-init' ? 'init' : skill.name;
+  const actualFilePath = skill.type === 'agent'
+    ? `_consultant/agents/${actualFileName}.md`
+    : `_consultant/skills/${actualFileName}.md`;
 
   return `---
 name: '${skill.name}'
@@ -453,7 +463,7 @@ description: '${skill.description}'
 You must fully embody this agent's persona and follow all activation instructions exactly as specified.
 
 <agent-activation CRITICAL="TRUE">
-1. IMMEDIATELY load the agent/skill file from @${filePath}
+1. IMMEDIATELY load the agent/skill file from @${actualFilePath}
 2. READ its entire contents carefully
 3. Execute ALL activation steps exactly as written in the file
 4. Follow the agent's persona, rules and workflow precisely
@@ -476,55 +486,240 @@ Before executing, also load these critical context files:
 `;
 }
 
+function generateClaudeMd(targetDir) {
+  const claudeMd = `# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+**Consultant Stack** - AI Agents Framework for B2B consulting project lifecycle management. Provides a complete workflow from discovery to delivery with specialized agents and skills.
+
+## Quick Start
+
+Use \`/consultant:orchestrator\` to start the intelligent project assistant.
+
+## Commands
+
+### Consultant Stack Commands (via /consultant:*)
+\`\`\`
+/consultant:orchestrator    # Main entry point - intelligent routing
+/consultant:project-init    # Initialize a new client project
+/consultant:status          # Show current project status
+/consultant:next            # Get next recommended action
+
+# Discovery Phase
+/consultant:clarify         # Clarify client requirements
+/consultant:frame           # Frame and problematize the project
+
+# Quotation Phase
+/consultant:estimate        # Technical estimation
+/consultant:quote           # Generate client quote
+
+# Specs Phase
+/consultant:spec            # Detailed technical specification
+/consultant:analyze-codebase # Analyze existing code (brownfield)
+
+# Planning Phase
+/consultant:create-story    # Create user stories
+/consultant:plan-sprint     # Sprint planning
+
+# Development Phase
+/consultant:implement       # Code implementation
+/consultant:test            # Run tests
+
+# Delivery Phase
+/consultant:docs            # Generate documentation
+/consultant:handoff         # Client delivery package
+\`\`\`
+
+### CLI Commands
+\`\`\`bash
+npx consultemps init        # Initialize framework (first time)
+npx consultemps update      # Update framework files
+npx consultemps version     # Show version
+\`\`\`
+
+## Architecture
+
+### Directory Structure
+\`\`\`
+_consultant/                  # Project-specific instance
+├── config.yaml               # Central config (consultant info, rates, languages)
+├── project-context.md        # Project "bible" - single source of truth
+├── workflow-status.yaml      # Current state tracking
+├── project-path.yaml         # Phase journey definition
+├── sprint-status.yaml        # Sprint/story tracking
+├── agents/                   # 6 specialized agents
+│   ├── orchestrator.md       # Leo - Main entry point & routing
+│   ├── discovery.md          # Marie - Requirements clarification
+│   ├── architect.md          # Technical design
+│   ├── planner.md            # Estimation & planning
+│   ├── developer.md          # Implementation
+│   └── delivery.md           # Documentation & handoff
+├── skills/                   # 17 skills across phases
+├── templates/                # Story, spec, quote, handoff templates
+├── modules/                  # Shared modules (estimation, techniques)
+├── data/                     # Reference data (40 consulting techniques)
+├── output/                   # Generated deliverables
+└── stories/                  # User story files
+
+.claude/commands/consultant/  # Claude Code slash commands
+\`\`\`
+
+### Agent System
+
+| Agent | Persona | Role | Key Skills |
+|-------|---------|------|------------|
+| **Orchestrator** | Leo | Single entry point & intelligent routing | /project-init, /status, /next |
+| **Discovery** | Marie | Requirements clarification | /clarify, /frame |
+| **Architect** | - | Technical design | /spec, /analyze-codebase |
+| **Planner** | - | Estimation & planning | /estimate, /quote, /create-story |
+| **Developer** | - | Implementation | /implement, /test |
+| **Delivery** | - | Documentation | /docs, /handoff |
+
+### Project Phases
+
+\`\`\`
+0. Analysis (brownfield only)
+   └─> 1. Discovery ─> 2. Quotation ─> 3. Specs ─> 4. Planning ─> 5. Development ─> 6. Delivery
+\`\`\`
+
+Phases have dependencies - progression blocked without completing required workflows.
+
+## Key Patterns
+
+### State Management
+- **YAML** for structured state (workflow-status.yaml, sprint-status.yaml)
+- **Markdown** for narrative docs (project-context.md, specs, stories)
+- State files are the source of truth - agents read/update these files
+
+### Configuration (\`_consultant/config.yaml\`)
+- \`communication_language\`: User interaction language (french/english)
+- \`document_output_language\`: Generated document language
+- \`autonomy\`: Per-agent autonomy levels (high, very_high, medium)
+- \`rates\`: Hourly rates for discovery/development/documentation
+
+### Critical Checkpoints (always require human approval)
+- quotation_approval
+- final_delivery
+- scope_change
+- security_decision
+- budget_adjustment
+
+### Agent/Skill Files
+Each agent/skill is a \`.md\` file with:
+- YAML frontmatter (name, description)
+- XML-formatted activation instructions and rules
+- Persona definition and communication style
+
+## Global Rules
+
+From \`config.yaml\`:
+- ALWAYS load \`project-context.md\` before any action
+- ALWAYS update \`project-context.md\` after significant changes
+- NEVER skip checkpoints for critical actions
+- Communicate in configured \`{communication_language}\`
+- Generate documents in \`{document_output_language}\`
+
+## Project Detection
+
+Framework auto-detects:
+- **Greenfield**: New project (empty/no existing code)
+- **Brownfield**: Existing codebase (triggers /analyze-codebase first)
+`;
+
+  fs.writeFileSync(path.join(targetDir, 'CLAUDE.md'), claudeMd, 'utf8');
+}
+
 // ============================================================================
 // CURSOR SETUP
 // ============================================================================
 
 function setupCursor(targetDir) {
-  const cursorRules = `# Consultant Stack Rules for Cursor
+  const cursorRules = `# Consultant Stack - Cursor Rules
 
-## Overview
-This project uses the Consultant Stack framework for B2B consulting projects.
+## Project Overview
 
-## Agents
-Load agents from _consultant/agents/:
-- orchestrator.md - Main entry point, intelligent project orchestrator
-- discovery.md - Client needs clarification
-- architect.md - Technical design
-- planner.md - Planning and estimation
-- developer.md - Implementation
-- delivery.md - Documentation and delivery
+**Consultant Stack** - AI Agents Framework for B2B consulting project lifecycle management.
+Provides a complete workflow from discovery to delivery with specialized agents and skills.
 
-## Skills (Commands)
-Load skills from _consultant/skills/:
-- /clarify - Clarify client requirements
-- /frame - Frame and problematize the project
-- /estimate - Technical estimation
-- /quote - Generate client quote
-- /spec - Detailed technical specification
-- /create-story - Create user stories
-- /plan-sprint - Sprint planning
-- /implement - Code implementation
-- /test - Run tests
-- /docs - Generate documentation
-- /handoff - Client delivery
-- /status - Current project status
-- /next - Next recommended action
-- /init - Initialize new project
-- /analyze-codebase - Analyze existing codebase
+## Quick Start
 
-## Configuration
-- _consultant/config.yaml - Consultant identity and rates
-- _consultant/workflow-status.yaml - Current project state
-- _consultant/project-context.md - Project details
+To start, load and follow the orchestrator agent:
+1. Open _consultant/agents/orchestrator.md
+2. Follow ALL activation instructions in the file
+3. The orchestrator (Leo) will guide you through the workflow
 
-## How to Use
-1. Load the orchestrator: Read _consultant/agents/orchestrator.md
-2. Follow the activation instructions in the file
-3. The orchestrator will guide you through the workflow
+## Architecture
 
-## Language
-Communicate in the language specified in _consultant/config.yaml (communication_language field).
+### Directory Structure
+\`\`\`
+_consultant/
+├── config.yaml               # Central config (consultant info, rates, languages)
+├── project-context.md        # Project "bible" - single source of truth
+├── workflow-status.yaml      # Current state tracking
+├── project-path.yaml         # Phase journey definition
+├── agents/                   # 6 specialized agents
+│   ├── orchestrator.md       # Leo - Main entry point
+│   ├── discovery.md          # Marie - Requirements
+│   ├── architect.md          # Technical design
+│   ├── planner.md            # Estimation & planning
+│   ├── developer.md          # Implementation
+│   └── delivery.md           # Documentation
+├── skills/                   # 17 skills across phases
+├── templates/                # Story, spec, quote templates
+├── output/                   # Generated deliverables
+└── stories/                  # User story files
+\`\`\`
+
+### Agent System
+
+| Agent | File | Role |
+|-------|------|------|
+| Orchestrator (Leo) | orchestrator.md | Entry point & routing |
+| Discovery (Marie) | discovery.md | Requirements clarification |
+| Architect | architect.md | Technical design |
+| Planner | planner.md | Estimation & planning |
+| Developer | developer.md | Implementation |
+| Delivery | delivery.md | Documentation & handoff |
+
+### Skills (load from _consultant/skills/)
+
+**Discovery**: clarify.md, frame.md
+**Quotation**: estimate.md, quote.md
+**Specs**: spec.md, analyze-codebase.md
+**Planning**: create-story.md, plan-sprint.md
+**Development**: implement.md, test.md
+**Delivery**: docs.md, handoff.md
+**Utilities**: status.md, next.md, init.md
+
+### Project Phases
+
+0. Analysis (brownfield) -> 1. Discovery -> 2. Quotation -> 3. Specs -> 4. Planning -> 5. Development -> 6. Delivery
+
+## Key Rules
+
+1. ALWAYS load config.yaml first to get consultant identity and language settings
+2. ALWAYS load project-context.md before any action
+3. ALWAYS update project-context.md after significant changes
+4. ALWAYS check workflow-status.yaml for current state
+5. Communicate in the language specified in config.yaml (communication_language)
+6. Generate documents in the language specified in config.yaml (document_output_language)
+
+## Critical Checkpoints (require human approval)
+
+- quotation_approval
+- final_delivery
+- scope_change
+- security_decision
+- budget_adjustment
+
+## State Files
+
+- **workflow-status.yaml**: Current phase, completed workflows, next action
+- **sprint-status.yaml**: Active sprint, story status
+- **project-context.md**: All project knowledge (the "bible")
 `;
 
   fs.writeFileSync(path.join(targetDir, '.cursorrules'), cursorRules, 'utf8');
@@ -536,37 +731,88 @@ Communicate in the language specified in _consultant/config.yaml (communication_
 // ============================================================================
 
 function setupWindsurf(targetDir) {
-  const windsurfRules = `# Consultant Stack Rules for Windsurf
+  const windsurfRules = `# Consultant Stack - Windsurf Rules
 
-## Framework B2B Consultant
-This project uses the Consultant Stack for B2B consulting project management.
+## Project Overview
 
-## Agents
-Load from _consultant/agents/:
-- orchestrator.md (main entry point)
-- discovery.md (requirements clarification)
-- architect.md (technical design)
-- planner.md (estimation and planning)
-- developer.md (implementation)
-- delivery.md (documentation and handoff)
+**Consultant Stack** - AI Agents Framework for B2B consulting project lifecycle management.
+Complete workflow from discovery to delivery with specialized agents and skills.
 
-## Skills
-Load from _consultant/skills/:
-clarify, frame, estimate, quote, spec, create-story, plan-sprint,
-implement, test, docs, handoff, status, next, init, analyze-codebase
+## Quick Start
 
-## Configuration
-- _consultant/config.yaml - Consultant identity and settings
-- _consultant/workflow-status.yaml - Project state tracking
-- _consultant/project-context.md - Project information
+1. Open and read _consultant/agents/orchestrator.md
+2. Follow ALL activation instructions exactly as written
+3. The orchestrator (Leo) will guide you through the workflow
 
-## Getting Started
-1. Read _consultant/agents/orchestrator.md
-2. Follow the activation instructions
-3. Use the intelligent menu to navigate workflows
+## Architecture
 
-## Language
-Respect the communication_language setting in config.yaml.
+### Directory Structure
+\`\`\`
+_consultant/
+├── config.yaml               # Consultant identity, rates, languages
+├── project-context.md        # Project knowledge base
+├── workflow-status.yaml      # Current state
+├── agents/                   # 6 specialized agents
+│   ├── orchestrator.md       # Leo - Entry point
+│   ├── discovery.md          # Marie - Requirements
+│   ├── architect.md          # Technical design
+│   ├── planner.md            # Planning
+│   ├── developer.md          # Implementation
+│   └── delivery.md           # Documentation
+├── skills/                   # 17 skills
+├── templates/                # Document templates
+├── output/                   # Deliverables
+└── stories/                  # User stories
+\`\`\`
+
+### Agents
+
+| Agent | Persona | Role |
+|-------|---------|------|
+| Orchestrator | Leo | Entry point & intelligent routing |
+| Discovery | Marie | Requirements clarification |
+| Architect | - | Technical design & specs |
+| Planner | - | Estimation & story creation |
+| Developer | - | Implementation & testing |
+| Delivery | - | Documentation & handoff |
+
+### Skills by Phase
+
+**Discovery**: clarify, frame
+**Quotation**: estimate, quote
+**Specs**: spec, analyze-codebase
+**Planning**: create-story, plan-sprint
+**Development**: implement, test
+**Delivery**: docs, handoff
+**Utilities**: status, next, init
+
+### Project Phases
+
+Analysis (brownfield) -> Discovery -> Quotation -> Specs -> Planning -> Development -> Delivery
+
+## Key Rules
+
+1. ALWAYS load config.yaml first
+2. ALWAYS read project-context.md before any action
+3. ALWAYS update project-context.md after changes
+4. Check workflow-status.yaml for current state
+5. Use communication_language from config.yaml
+6. Generate docs in document_output_language
+
+## Critical Checkpoints
+
+These ALWAYS require human approval:
+- quotation_approval
+- final_delivery
+- scope_change
+- security_decision
+- budget_adjustment
+
+## State Management
+
+- workflow-status.yaml: Phase tracking
+- sprint-status.yaml: Sprint progress
+- project-context.md: All project knowledge
 `;
 
   fs.writeFileSync(path.join(targetDir, '.windsurfrules'), windsurfRules, 'utf8');
@@ -581,30 +827,69 @@ function setupCline(targetDir) {
   const clineDir = path.join(targetDir, '.cline');
   fs.mkdirSync(clineDir, { recursive: true });
 
-  const clineRules = `# Consultant Stack for Cline
+  const clineRules = `# Consultant Stack - Cline Rules
 
-## Framework
-B2B consulting project management with AI agents.
+## Project Overview
 
-## Entry Point
-Load _consultant/agents/orchestrator.md to start.
+**Consultant Stack** - AI Agents Framework for B2B consulting.
+Complete workflow: Discovery -> Quotation -> Specs -> Planning -> Development -> Delivery
+
+## Quick Start
+
+1. Read _consultant/agents/orchestrator.md
+2. Execute ALL activation instructions
+3. Follow Leo (orchestrator) through the workflow
+
+## Directory Structure
+
+\`\`\`
+_consultant/
+├── config.yaml           # Consultant info, rates, language
+├── project-context.md    # Project knowledge (read first!)
+├── workflow-status.yaml  # Current state
+├── agents/               # 6 agents with personas
+├── skills/               # 17 workflow skills
+├── templates/            # Document templates
+├── output/               # Generated files
+└── stories/              # User stories
+\`\`\`
 
 ## Agents (_consultant/agents/)
-- orchestrator.md - Project orchestrator
-- discovery.md - Requirements gathering
-- architect.md - Technical architecture
-- planner.md - Sprint planning
-- developer.md - Development
-- delivery.md - Documentation
+
+| File | Persona | Role |
+|------|---------|------|
+| orchestrator.md | Leo | Entry point, routing |
+| discovery.md | Marie | Requirements |
+| architect.md | - | Technical design |
+| planner.md | - | Estimation |
+| developer.md | - | Implementation |
+| delivery.md | - | Documentation |
 
 ## Skills (_consultant/skills/)
-clarify, frame, estimate, quote, spec, create-story, plan-sprint,
-implement, test, docs, handoff, status, next, init, analyze-codebase
 
-## Config
-- _consultant/config.yaml - Settings
-- _consultant/workflow-status.yaml - State
-- _consultant/project-context.md - Context
+**Discovery**: clarify, frame
+**Quotation**: estimate, quote
+**Specs**: spec, analyze-codebase
+**Planning**: create-story, plan-sprint
+**Development**: implement, test
+**Delivery**: docs, handoff
+**Utilities**: status, next, init
+
+## Key Rules
+
+1. Load config.yaml first (language, rates)
+2. Read project-context.md before any action
+3. Update project-context.md after changes
+4. Check workflow-status.yaml for state
+5. Respect communication_language setting
+
+## Checkpoints (require approval)
+
+- quotation_approval
+- final_delivery
+- scope_change
+- security_decision
+- budget_adjustment
 `;
 
   fs.writeFileSync(path.join(clineDir, 'rules.md'), clineRules, 'utf8');
