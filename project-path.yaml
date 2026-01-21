@@ -1,0 +1,193 @@
+# =============================================================================
+# PROJECT PATH - Le chemin complet du projet
+# =============================================================================
+# Définit l'ordre des phases, workflows et leurs dépendances.
+# L'orchestrateur utilise ce fichier pour guider le projet.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# PHASES DU PROJET
+# -----------------------------------------------------------------------------
+phases:
+  # ---------------------------------------------------------------------------
+  # PHASE 0: Analysis (Brownfield uniquement)
+  # ---------------------------------------------------------------------------
+  - phase: 0
+    name: "Analysis"
+    description: "Analyse du code existant avant planification"
+    agent: "architect"
+    condition: "project_type == brownfield"
+    workflows:
+      - id: "analyze-codebase"
+        skill: "/analyze-codebase"
+        required: true
+        description: "Analyser le code existant pour comprendre l'architecture"
+        output: "project-context.md updated with Technical Context"
+
+  # ---------------------------------------------------------------------------
+  # PHASE 1: Discovery
+  # ---------------------------------------------------------------------------
+  - phase: 1
+    name: "Discovery"
+    description: "Comprendre et clarifier les besoins du client"
+    agent: "discovery"
+    workflows:
+      - id: "frame"
+        skill: "/frame"
+        required: true
+        description: "Cadrage rapide du projet pour estimation"
+        output: "output/discovery/frame.md"
+
+      - id: "clarify"
+        skill: "/clarify"
+        required: true
+        depends_on: ["frame"]
+        description: "Clarification des besoins détaillés"
+        output: "project-context.md updated"
+
+      - id: "upsell"
+        skill: "/upsell"
+        required: false
+        depends_on: ["clarify"]
+        description: "Identification des opportunités d'upselling"
+        output: "project-context.md > Upsell Opportunities"
+
+  # ---------------------------------------------------------------------------
+  # PHASE 2: Quotation
+  # ---------------------------------------------------------------------------
+  - phase: 2
+    name: "Quotation"
+    description: "Estimation et création du devis"
+    agent: "architect"
+    workflows:
+      - id: "estimate"
+        skill: "/estimate"
+        required: true
+        depends_on: ["frame"]
+        description: "Estimation détaillée de l'effort"
+        output: "output/quotation/estimate.md"
+
+      - id: "quote"
+        skill: "/quote"
+        required: true
+        depends_on: ["estimate"]
+        description: "Génération du devis formel"
+        checkpoint: "quotation_approval"
+        checkpoint_message: "Le devis nécessite l'approbation du client avant de continuer."
+        output: "output/quotation/devis.md"
+
+  # ---------------------------------------------------------------------------
+  # PHASE 3: Specs
+  # ---------------------------------------------------------------------------
+  - phase: 3
+    name: "Specs"
+    description: "Spécification technique de la solution"
+    agent: "architect"
+    workflows:
+      - id: "spec"
+        skill: "/spec"
+        required: true
+        depends_on: ["quote"]
+        description: "Création de la spécification technique"
+        checkpoint: "architecture_sign_off"
+        checkpoint_message: "L'architecture technique doit être validée avant le développement."
+        output: "output/specs/spec-technique.md"
+
+  # ---------------------------------------------------------------------------
+  # PHASE 4: Planning
+  # ---------------------------------------------------------------------------
+  - phase: 4
+    name: "Planning"
+    description: "Création des stories et planification des sprints"
+    agent: "planner"
+    workflows:
+      - id: "create-story"
+        skill: "/create-story"
+        required: true
+        repeatable: true
+        depends_on: ["spec"]
+        description: "Créer des stories détaillées pour le développement"
+        output: "stories/STORY-XXX.md"
+
+      - id: "plan-sprint"
+        skill: "/plan-sprint"
+        required: true
+        depends_on: ["create-story"]
+        description: "Organiser les stories en sprint"
+        output: "sprint-status.yaml updated"
+
+  # ---------------------------------------------------------------------------
+  # PHASE 5: Development
+  # ---------------------------------------------------------------------------
+  - phase: 5
+    name: "Development"
+    description: "Implémentation et tests"
+    agent: "developer"
+    workflows:
+      - id: "implement"
+        skill: "/implement"
+        required: true
+        repeatable: true
+        depends_on: ["plan-sprint"]
+        description: "Implémenter les stories"
+        output: "Code + story files updated"
+
+      - id: "test"
+        skill: "/test"
+        required: true
+        repeatable: true
+        description: "Générer et exécuter les tests"
+        output: "Test files + results"
+
+  # ---------------------------------------------------------------------------
+  # PHASE 6: Delivery
+  # ---------------------------------------------------------------------------
+  - phase: 6
+    name: "Delivery"
+    description: "Documentation et livraison au client"
+    agent: "delivery"
+    workflows:
+      - id: "docs"
+        skill: "/docs"
+        required: true
+        depends_on: ["implement"]
+        description: "Créer la documentation utilisateur"
+        output: "output/delivery/documentation/"
+
+      - id: "handoff"
+        skill: "/handoff"
+        required: true
+        depends_on: ["docs"]
+        description: "Préparer le package de livraison complet"
+        checkpoint: "final_delivery"
+        checkpoint_message: "La livraison finale nécessite une validation avant envoi au client."
+        output: "output/delivery/handoff-package/"
+
+# -----------------------------------------------------------------------------
+# MAPPING PHASE -> LIBELLÉ POUR AFFICHAGE
+# -----------------------------------------------------------------------------
+phase_labels:
+  not_started: "Non démarré"
+  discovery: "Discovery"
+  quotation: "Devis"
+  specs: "Spécifications"
+  planning: "Planification"
+  development: "Développement"
+  delivery: "Livraison"
+  completed: "Terminé"
+
+# -----------------------------------------------------------------------------
+# RÈGLES DE TRANSITION
+# -----------------------------------------------------------------------------
+transition_rules:
+  # On ne peut pas sauter de phase (sauf si explicitement autorisé)
+  allow_skip: false
+
+  # Workflows optionnels peuvent être sautés
+  allow_skip_optional: true
+
+  # Les checkpoints bloquent TOUJOURS la progression
+  checkpoints_are_blocking: true
+
+  # Un workflow repeatable peut être exécuté plusieurs fois
+  # mais doit être exécuté au moins une fois si required: true

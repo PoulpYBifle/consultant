@@ -1,0 +1,88 @@
+# =============================================================================
+# STACK B2B CONSULTANT - CONFIGURATION CENTRALE
+# =============================================================================
+# Ce fichier est la source unique de vérité pour toutes les configurations.
+# Tous les agents et skills DOIVENT charger ce fichier AVANT toute action.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# IDENTITÉ DU CONSULTANT
+# -----------------------------------------------------------------------------
+consultant:
+  name: "CLAUDEGOAT"
+  company: "Digital Transformation Consulting"
+  email: ""
+  specialty: "B2B SaaS / ERP / Process Digitalization"
+
+# -----------------------------------------------------------------------------
+# LANGUES
+# -----------------------------------------------------------------------------
+communication_language: "french"        # Langue de conversation avec l'utilisateur
+document_output_language: "french"      # Langue des documents générés
+
+# -----------------------------------------------------------------------------
+# CHEMINS (relatifs à la racine du projet)
+# -----------------------------------------------------------------------------
+paths:
+  root: "{project-root}"
+  consultant_home: "{project-root}/_consultant"
+  project_context: "{project-root}/_consultant/project-context.md"
+  workflow_status: "{project-root}/_consultant/workflow-status.yaml"
+  project_path: "{project-root}/_consultant/project-path.yaml"
+  sprint_status: "{project-root}/_consultant/sprint-status.yaml"
+  stories_dir: "{project-root}/_consultant/stories"
+  output_dir: "{project-root}/_consultant/output"
+  templates_dir: "{project-root}/_consultant/templates"
+  agents_dir: "{project-root}/_consultant/agents"
+  skills_dir: "{project-root}/_consultant/skills"
+
+# -----------------------------------------------------------------------------
+# NIVEAUX D'AUTONOMIE PAR AGENT
+# -----------------------------------------------------------------------------
+# very_high: Agent procède sans confirmation
+# high: Agent procède, confirme aux checkpoints
+# medium: Agent propose, attend approbation
+# -----------------------------------------------------------------------------
+autonomy:
+  discovery: "high"
+  architect: "high"
+  planner: "high"
+  developer: "very_high"
+  delivery: "high"
+
+# -----------------------------------------------------------------------------
+# CHECKPOINTS CRITIQUES (toujours validation humaine)
+# -----------------------------------------------------------------------------
+critical_checkpoints:
+  - quotation_approval      # Approbation du devis
+  - final_delivery          # Livraison finale au client
+  - scope_change            # Changement de périmètre
+  - security_decision       # Décision de sécurité
+  - budget_adjustment       # Ajustement budgétaire
+
+# -----------------------------------------------------------------------------
+# TARIFICATION (pour les estimations)
+# -----------------------------------------------------------------------------
+rates:
+  discovery_hourly: 150       # Tarif horaire discovery
+  development_hourly: 120     # Tarif horaire développement
+  documentation_hourly: 100   # Tarif horaire documentation
+  currency: "EUR"
+
+# -----------------------------------------------------------------------------
+# PRÉFÉRENCES DE PROJET
+# -----------------------------------------------------------------------------
+preferences:
+  user_skill_level: "intermediate"  # beginner | intermediate | advanced
+  default_priority: "P2"            # P1 | P2 | P3
+  story_prefix: "STORY"             # Préfixe des IDs de story
+
+# -----------------------------------------------------------------------------
+# RÈGLES GLOBALES
+# -----------------------------------------------------------------------------
+global_rules:
+  - "ALWAYS load project-context.md before any action"
+  - "ALWAYS update project-context.md after significant changes"
+  - "NEVER skip checkpoints for critical actions"
+  - "ALWAYS communicate in {communication_language}"
+  - "ALWAYS generate documents in {document_output_language}"

@@ -1,0 +1,50 @@
+# =============================================================================
+# SPRINT STATUS - TRACKING DES TÂCHES
+# =============================================================================
+# Ce fichier track le statut de toutes les stories et tâches du projet.
+# Statuts: todo | in_progress | blocked | done
+# =============================================================================
+
+sprint:
+  name: "Sprint 1"
+  start_date: ""
+  end_date: ""
+  goal: ""
+
+# -----------------------------------------------------------------------------
+# STORIES
+# -----------------------------------------------------------------------------
+stories:
+  # Exemple de structure:
+  # - id: "STORY-001"
+  #   title: "Titre de la story"
+  #   status: "todo"           # todo | in_progress | blocked | done
+  #   priority: "P1"           # P1 | P2 | P3
+  #   assigned_to: "developer" # agent assigné
+  #   blocked_by: ""           # ID de la story bloquante (si blocked)
+  #   notes: ""
+
+# -----------------------------------------------------------------------------
+# STATISTIQUES (auto-calculées)
+# -----------------------------------------------------------------------------
+statistics:
+  total_stories: 0
+  todo: 0
+  in_progress: 0
+  blocked: 0
+  done: 0
+  completion_percentage: 0
+
+# -----------------------------------------------------------------------------
+# BLOCKERS ACTIFS
+# -----------------------------------------------------------------------------
+blockers: []
+  # - story_id: "STORY-XXX"
+  #   reason: "Description du blocage"
+  #   since: "YYYY-MM-DD"
+  #   action_needed: "Action requise pour débloquer"
+
+# -----------------------------------------------------------------------------
+# NOTES DE SPRINT
+# -----------------------------------------------------------------------------
+notes: ""

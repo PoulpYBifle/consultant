@@ -1,0 +1,81 @@
+# =============================================================================
+# WORKFLOW STATUS - État d'avancement du projet
+# =============================================================================
+# Ce fichier est mis à jour automatiquement par l'orchestrateur après chaque skill.
+# Il permet de savoir exactement où en est le projet et quelle est la prochaine action.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# PROJET
+# -----------------------------------------------------------------------------
+project:
+  name: ""                        # Nom du projet (rempli par /init)
+  client: ""                      # Nom du client
+  type: ""                        # greenfield | brownfield
+  phase: "not_started"            # not_started | discovery | quotation | specs | planning | development | delivery
+  created: ""                     # Date de création (YYYY-MM-DD)
+  last_activity: ""               # Dernière activité (YYYY-MM-DD HH:MM)
+
+# -----------------------------------------------------------------------------
+# STATUT DES WORKFLOWS
+# -----------------------------------------------------------------------------
+# Statuts possibles: pending | in_progress | completed | skipped
+# -----------------------------------------------------------------------------
+workflow_status:
+  # Phase 0 - Analysis (Brownfield only)
+  analyze-codebase: "pending"     # Analyse du code existant (brownfield uniquement)
+
+  # Phase 1 - Discovery
+  frame: "pending"                # Cadrage rapide du projet
+  clarify: "pending"              # Clarification des besoins
+  upsell: "pending"               # Identification opportunités (optionnel)
+
+  # Phase 2 - Quotation
+  estimate: "pending"             # Estimation de l'effort
+  quote: "pending"                # Génération du devis formel
+
+  # Phase 3 - Specs
+  spec: "pending"                 # Spécification technique
+
+  # Phase 4 - Planning
+  create-story: "pending"         # Création des stories (repeatable)
+  plan-sprint: "pending"          # Planification du sprint
+
+  # Phase 5 - Development
+  implement: "pending"            # Implémentation (repeatable)
+  test: "pending"                 # Tests (repeatable)
+
+  # Phase 6 - Delivery
+  docs: "pending"                 # Documentation utilisateur
+  handoff: "pending"              # Package de livraison
+
+# -----------------------------------------------------------------------------
+# PROCHAINE ACTION RECOMMANDÉE
+# -----------------------------------------------------------------------------
+next_action:
+  workflow: "init"                # Workflow à exécuter
+  agent: "orchestrator"           # Agent responsable
+  reason: "Projet non initialisé" # Pourquoi cette action
+
+# -----------------------------------------------------------------------------
+# CHECKPOINTS PASSÉS
+# -----------------------------------------------------------------------------
+checkpoints_passed:
+  # quotation_approval: ""        # Date d'approbation du devis
+  # architecture_sign_off: ""     # Date de validation de l'architecture
+  # final_delivery: ""            # Date de livraison finale
+
+# -----------------------------------------------------------------------------
+# NOTES & BLOCKERS
+# -----------------------------------------------------------------------------
+blockers: []                      # Liste des éléments bloquants
+notes: []                         # Notes diverses
+
+# -----------------------------------------------------------------------------
+# HISTORIQUE (dernières 5 actions)
+# -----------------------------------------------------------------------------
+history: []
+  # - workflow: "frame"
+  #   completed: "2024-01-15 14:30"
+  #   agent: "discovery"
+  #   output: "output/discovery/frame.md"
