@@ -1,0 +1,59 @@
+id,category,technique,description,best_for,phase,complexity,duration_min,triggers,skill
+# ELICITATION TECHNIQUES (10) - Discovery/Clarify
+EL-01,elicitation,5 Whys,Drill down through causation layers to find root cause,Unclear problems and root causes,discovery,low,10,vague_requirement|unclear_cause|dont_know_why,clarify
+EL-02,elicitation,Jobs-to-be-Done,Identify functional/emotional/social jobs client is hiring for,Understanding true underlying needs,discovery,medium,20,feature_request|new_product|why_this_feature,clarify|frame
+EL-03,elicitation,Empathy Mapping,Map what users say/think/do/feel to understand perspective,User-centric requirements gathering,discovery,medium,30,user_confusion|ux_focus|unclear_user_needs,clarify
+EL-04,elicitation,Scenario Walkthrough,Walk through concrete usage scenarios step by step,Unclear user flows and processes,discovery,low,15,unclear_flow|process_confusion|step_by_step,clarify
+EL-05,elicitation,Assumption Mapping,Surface and validate hidden assumptions,Risky projects with many unknowns,discovery,medium,25,high_risk|many_assumptions|uncertain,clarify|frame
+EL-06,elicitation,Stakeholder Interview,Structured interview to extract requirements from stakeholders,Multiple perspectives needed,discovery,medium,30,multiple_stakeholders|conflicting_needs,clarify|frame
+EL-07,elicitation,Context Mapping,Map the broader context around the problem,Complex organizational context,discovery,high,45,complex_context|organizational_dynamics,frame
+EL-08,elicitation,Pain Point Prioritization,Rank and prioritize pain points by impact,Multiple pain points to address,discovery,low,15,many_pain_points|prioritization_needed,frame|clarify
+EL-09,elicitation,Goal Decomposition,Break down high-level goals into measurable objectives,Vague or ambitious goals,discovery,medium,20,vague_goals|ambitious_objectives,frame
+EL-10,elicitation,As-Is/To-Be Analysis,Compare current state vs desired future state,Transformation projects,discovery,medium,25,transformation|improvement|current_vs_future,clarify|frame
+
+# ANALYSIS TECHNIQUES (10) - Frame/Estimate
+AN-01,analysis,Value Proposition Canvas,Map customer pains/gains to product features,New product or unclear value,quotation,medium,30,new_product|unclear_value|positioning,frame
+AN-02,analysis,Problem-Solution Fit,Validate that solution actually solves the stated problem,Solution validation,quotation,low,15,solution_unclear|validation_needed,frame
+AN-03,analysis,Stakeholder Mapping,Map stakeholders by power and interest,Complex stakeholder landscape,quotation,medium,20,multiple_stakeholders|political,frame
+AN-04,analysis,Success Criteria Definition,Define clear measurable success criteria and KPIs,Unclear success definition,quotation,low,15,unclear_success|missing_kpis,frame|estimate
+AN-05,analysis,Risk Assessment Matrix,Identify and assess project risks,Risk identification needed,quotation,medium,25,risky_project|unknowns,estimate|spec
+AN-06,analysis,Analogical Estimation,Estimate by comparing to similar past projects,Estimation with reference points,quotation,low,15,need_estimate|similar_project_exists,estimate
+AN-07,analysis,T-Shirt Sizing,Quick relative sizing (S/M/L/XL),Rapid rough estimation,quotation,low,10,quick_estimate|relative_sizing,estimate
+AN-08,analysis,Three-Point Estimation,Calculate estimate using optimistic/likely/pessimistic,Estimation with uncertainty,quotation,medium,20,uncertain_estimate|range_needed,estimate
+AN-09,analysis,Feature Prioritization Matrix,Prioritize features by value vs effort,Feature prioritization needed,quotation,medium,25,many_features|prioritization,frame|estimate
+AN-10,analysis,Dependency Mapping,Identify and map dependencies between elements,Complex interdependencies,quotation,medium,20,dependencies|sequencing_needed,estimate|spec
+
+# DECOMPOSITION TECHNIQUES (10) - Stories
+DE-01,decomposition,INVEST Criteria,Validate story quality (Independent/Negotiable/Valuable/Estimable/Small/Testable),Story quality validation,planning,low,10,story_created|quality_check,create-story
+DE-02,decomposition,Story Splitting,Split large stories into smaller independent pieces,Story too large to implement,planning,medium,20,large_story|too_big|needs_split,create-story
+DE-03,decomposition,Acceptance Criteria Workshop,Collaborative session to define clear acceptance criteria,Unclear or missing AC,planning,medium,25,unclear_ac|missing_criteria,create-story
+DE-04,decomposition,Example Mapping,Discover edge cases through concrete examples,Edge cases not identified,planning,medium,30,edge_cases|missing_scenarios,create-story
+DE-05,decomposition,User Story Mapping,Map user journey to identify all needed stories,Epic breakdown needed,planning,high,45,epic_breakdown|user_journey,create-story
+DE-06,decomposition,Vertical Slicing,Slice features vertically through all layers,Full-stack story needed,planning,medium,20,full_stack|vertical_slice,create-story
+DE-07,decomposition,Task Decomposition,Break story into technical implementation tasks,Implementation planning,planning,low,15,need_tasks|implementation,create-story
+DE-08,decomposition,Definition of Done,Define clear completion criteria for stories,Unclear when done,planning,low,10,definition_of_done|completion_criteria,create-story
+DE-09,decomposition,Spike Definition,Define time-boxed research for unknowns,Technical unknowns to explore,planning,low,15,unknown_tech|research_needed|spike,create-story
+DE-10,decomposition,MVP Scoping,Define minimum viable scope for feature,Scope too large for MVP,planning,medium,25,scope_large|mvp_needed|phase_1,create-story|frame
+
+# ARCHITECTURE TECHNIQUES (5) - Spec
+AR-01,architecture,C4 Model Simplified,Quick context/container/component diagrams,Architecture documentation,specs,medium,30,architecture_needed|documentation,spec
+AR-02,architecture,ADR (Architecture Decision Record),Document key architecture decisions with rationale,Important decisions to record,specs,low,15,key_decision|architecture_choice,spec
+AR-03,architecture,API Contract First,Define API contracts before implementation,API-centric development,specs,medium,25,api_design|contract_first,spec
+AR-04,architecture,Data Flow Diagram,Map how data flows through the system,Data-heavy application,specs,medium,20,data_flow|integration,spec
+AR-05,architecture,Security Threat Modeling,Identify security threats and mitigations,Security-sensitive application,specs,high,40,security_concerns|sensitive_data,spec
+
+# VALIDATION TECHNIQUES (3) - Tests/Quality
+VA-01,validation,Test Strategy Definition,Define overall testing approach and coverage,Test planning needed,development,medium,25,test_planning|coverage,test|spec
+VA-02,validation,Acceptance Test Design,Design tests from acceptance criteria,AC to test mapping,development,low,15,acceptance_testing|ac_coverage,test|create-story
+VA-03,validation,Edge Case Identification,Systematically identify edge cases to test,Edge case coverage,development,medium,20,edge_cases|boundary_testing,test|create-story
+
+# COMMUNICATION TECHNIQUES (2) - Delivery
+CO-01,communication,Executive Summary Writing,Craft concise summaries for executives,Executive communication,delivery,low,15,executive_audience|summary_needed,handoff|docs
+CO-02,communication,Demo Script Creation,Create structured demo walkthrough,Demo preparation,delivery,low,20,demo_needed|presentation,handoff
+
+# OPPORTUNITY DETECTION (5) - Upsell
+OP-01,opportunity,Gap Analysis,Identify gaps between current and desired state,Opportunity identification,discovery,medium,25,gaps_exist|improvement_potential,upsell
+OP-02,opportunity,Future State Visioning,Envision ideal future state with client,Long-term planning,discovery,medium,30,future_planning|vision_needed,upsell|frame
+OP-03,opportunity,Quick Win Identification,Find small high-impact improvements,Easy wins available,discovery,low,15,quick_wins|low_hanging_fruit,upsell
+OP-04,opportunity,Integration Opportunity Scan,Identify valuable system integrations,Integration potential,discovery,medium,20,manual_processes|double_entry,upsell
+OP-05,opportunity,Automation Potential Assessment,Assess opportunities for automation,Manual processes exist,discovery,medium,25,manual_work|repetitive_tasks,upsell
